@@ -71,7 +71,17 @@ renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
   case SM.lookup state.route stories of
     Just cmp -> HH.slot state.route cmp unit absurd
-    _ -> HH.text "hello world"
+    _ ->
+      HH.div_
+        [ HH.h2_ [ HH.text "Hello world" ]
+        , HH.p_
+            [ HH.text "This site is powered by "
+            , HH.a
+                [ HP.href "https://github.com/rnons/purescript-halogen-storybook" ]
+                [ HH.text "halogen-storybook" ]
+            , HH.text "."
+            ]
+        ]
 
 render :: forall m. Stories m -> State -> HTML m
 render stories state = do
