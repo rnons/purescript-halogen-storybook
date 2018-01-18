@@ -76,14 +76,12 @@ renderMain stories state =
 render :: forall m. Stories m -> State -> HTML m
 render stories state = do
   HH.div [ class_ "Storybook" ]
-    [ HH.div [ class_ "Storybook-sidebar" ]
-        [ HH.a
-            [ class_ "Storybook-logo"
-            , HP.href ""
-            ]
-            [ HH.text "Halogen Storybook" ]
-        , renderSidebar stories state
+    [ HH.a
+        [ class_ "Storybook-logo"
+        , HP.href ""
         ]
+        [ HH.text "Halogen Storybook" ]
+    , renderSidebar stories state
     , HH.div [ class_ "Storybook-main" ]
         [ renderMain stories state  ]
     ]
