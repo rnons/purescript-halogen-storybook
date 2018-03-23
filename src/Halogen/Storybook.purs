@@ -24,7 +24,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.Storybook.Proxy (ProxyS, proxy)
 import Halogen.VDom.Driver (runUI)
 
-import Routing (hashes)
+import Routing.Hash (hashes)
 
 data Query a
   = RouteChange String a
@@ -121,5 +121,5 @@ runStorybook
   -> Aff (HalogenEffects eff) Unit
 runStorybook stories body = do
   app' <- runUI (app stories) unit body
-  H.liftEff $ hashes $ \_ next ->
+  void $ H.liftEff $ hashes $ \_ next ->
     launchAff_ $ app'.query (H.action $ RouteChange $ decodeURI next)
