@@ -3,7 +3,6 @@ module Example.Input where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -39,4 +38,5 @@ component = H.component
       ]
 
   eval :: Query ~> H.ComponentDSL State Query Void m
-  eval (InputName name next) = H.modify _{ name = name } $> next
+  eval (InputName name next) = next <$ do
+    H.modify _{ name = name }

@@ -1,4 +1,4 @@
-import Main from "./Main.purs";
+import Main from "Main";
 import "./Storybook.css";
 
 Main.main();

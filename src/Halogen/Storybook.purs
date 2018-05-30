@@ -7,22 +7,21 @@ module Halogen.Storybook
 
 import Prelude
 
-import Control.Monad.Aff (Aff, launchAff_)
+import Effect.Aff (Aff, launchAff_)
 
 import Data.Const (Const)
 import Data.Functor (mapFlipped)
 import Data.Maybe (Maybe(..))
-import Data.StrMap as SM
-import DOM.HTML.Types (HTMLElement)
+import Web.HTML.HTMLElement (HTMLElement)
 
-import Global (decodeURI, encodeURI)
+import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
 
 import Halogen as H
-import Halogen.Aff (HalogenEffects)
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Halogen.Storybook.Proxy (ProxyS, proxy)
 import Halogen.VDom.Driver (runUI)
+import Foreign.Object as Object
 
 import Routing.Hash (hashes)
 
@@ -40,10 +39,10 @@ type StoryQuery = ProxyS (Const Void) Unit
 -- |
 -- | ```
 -- | stories :: forall m. Stories m
--- | stories = SM.fromFoldable
+-- | stories = Object.fromFoldable
 -- |   [ Tuple "count" $ proxy $ ExpCount.component
 -- | ```
-type Stories m = SM.StrMap (H.Component HH.HTML StoryQuery Unit Void m)
+type Stories m = Object.Object (H.Component HH.HTML StoryQuery Unit Void m)
 
 type Slot = String
 
@@ -55,11 +54,11 @@ class_ = HP.class_ <<< HH.ClassName
 renderSidebar :: forall m. Stories m -> State -> HTML m
 renderSidebar stories { route } =
   HH.ul [ class_ "Storybook-nav" ] $
-    mapFlipped (SM.keys stories) $ \name ->
+    mapFlipped (Object.keys stories) $ \name ->
       HH.li_
       [ HH.a
         [ class_ if route == name then linkActiveClass else linkClass
-        , HP.href $ "#" <> encodeURI name
+        , HP.href $ "#" <> unsafeEncodeURI name
         ]
         [ HH.text name ]
       ]
@@ -69,7 +68,7 @@ renderSidebar stories { route } =
 
 renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
-  case SM.lookup state.route stories of
+  case Object.lookup state.route stories of
     Just cmp -> HH.slot state.route cmp unit absurd
     _ ->
       HH.div_
@@ -111,15 +110,15 @@ app stories =
 
   eval :: Query ~> H.ParentDSL State Query StoryQuery Slot Void m
   eval (RouteChange route next) = do
-    H.modify (\state -> state { route = route })
+    void $ H.modify (\state -> state { route = route })
     pure next
 
 -- | Takes stories config and mount element, and renders the storybook.
 runStorybook
-  :: forall eff. Stories (Aff (HalogenEffects eff))
+  :: Stories Aff
   -> HTMLElement
-  -> Aff (HalogenEffects eff) Unit
+  -> Aff Unit
 runStorybook stories body = do
   app' <- runUI (app stories) unit body
-  void $ H.liftEff $ hashes $ \_ next ->
-    launchAff_ $ app'.query (H.action $ RouteChange $ decodeURI next)
+  void $ H.liftEffect $ hashes $ \_ next ->
+    launchAff_ $ app'.query (H.action $ RouteChange $ unsafeDecodeURI next)
