@@ -12,8 +12,8 @@ import Halogen.Storybook (Stories, runStorybook, proxy)
 
 stories :: forall m. Stories m
 stories = Object.fromFoldable
-  [ Tuple "count" $ proxy $ ExpCount.component
-  , Tuple "input" $ proxy $ ExpInput.component
+  [ Tuple "count" $ proxy ExpCount.component
+  , Tuple "input" $ proxy ExpInput.component
   ]
 
 main :: Effect Unit

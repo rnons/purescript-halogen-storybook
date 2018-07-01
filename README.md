@@ -15,12 +15,13 @@ A library to assemble examples or develop components separately.
 First define the stories. Each story consists of a name and a component.
 
 ```
+import Foreign.Object as Object
 import Halogen.Storybook (Stories, runStorybook, proxy)
 
 stories :: forall m. Stories m
-stories = SM.fromFoldable
-  [ Tuple "count" $ proxy $ ExpCount.component
-  , Tuple "input" $ proxy $ ExpInput.component
+stories = Object.fromFoldable
+  [ Tuple "count" $ proxy ExpCount.component
+  , Tuple "input" $ proxy ExpInput.component
   ]
 ```
 
@@ -31,3 +32,5 @@ main = HA.runHalogenAff do
   body <- HA.awaitBody
   runStorybook stories body
 ```
+
+You need to include the CSS by yourself, use [Storybook.css](https://github.com/rnons/purescript-halogen-storybook/blob/master/examples/src/Storybook.css) as an example.
