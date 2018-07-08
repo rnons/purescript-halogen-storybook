@@ -5,6 +5,7 @@ import Prelude
 import Data.Tuple (Tuple(Tuple))
 import Effect (Effect)
 import Example.Count as ExpCount
+import Example.Index as ExpIndex
 import Example.Input as ExpInput
 import Foreign.Object as Object
 import Halogen.Aff as HA
@@ -12,7 +13,8 @@ import Halogen.Storybook (Stories, runStorybook, proxy)
 
 stories :: forall m. Stories m
 stories = Object.fromFoldable
-  [ Tuple "count" $ proxy ExpCount.component
+  [ Tuple "" $ proxy ExpIndex.component
+  , Tuple "count" $ proxy ExpCount.component
   , Tuple "input" $ proxy ExpInput.component
   ]
 

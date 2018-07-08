@@ -7,23 +7,21 @@ module Halogen.Storybook
 
 import Prelude
 
-import Effect.Aff (Aff, launchAff_)
-
+import Data.Array as Array
 import Data.Const (Const)
 import Data.Functor (mapFlipped)
 import Data.Maybe (Maybe(..))
-import Web.HTML.HTMLElement (HTMLElement)
-
+import Data.String as String
+import Effect.Aff (Aff, launchAff_)
+import Foreign.Object as Object
 import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
-
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Halogen.Storybook.Proxy (ProxyS, proxy)
 import Halogen.VDom.Driver (runUI)
-import Foreign.Object as Object
-
 import Routing.Hash (hashes)
+import Web.HTML.HTMLElement (HTMLElement)
 
 data Query a
   = RouteChange String a
@@ -54,7 +52,7 @@ class_ = HP.class_ <<< HH.ClassName
 renderSidebar :: forall m. Stories m -> State -> HTML m
 renderSidebar stories { route } =
   HH.ul [ class_ "Storybook-nav" ] $
-    mapFlipped (Object.keys stories) $ \name ->
+    mapFlipped (Array.filter (not <<< String.null) $ Object.keys stories) $ \name ->
       HH.li_
       [ HH.a
         [ class_ if route == name then linkActiveClass else linkClass
