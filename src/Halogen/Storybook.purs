@@ -46,6 +46,11 @@ type Slot = String
 
 type HTML m = H.ParentHTML Query StoryQuery Slot m
 
+type Config m =
+  { stories :: Stories m
+  , logo :: Maybe HH.PlainHTML
+  }
+
 class_ :: forall r i. String -> HP.IProp ("class" :: String | r) i
 class_ = HP.class_ <<< HH.ClassName
 
@@ -80,24 +85,27 @@ renderMain stories state =
             ]
         ]
 
-render :: forall m. Stories m -> State -> HTML m
-render stories state = do
+render :: forall m. Config m -> State -> HTML m
+render { stories, logo } state = do
   HH.div [ class_ "Storybook" ]
     [ HH.a
-        [ class_ "Storybook-logo"
-        , HP.href ""
-        ]
-        [ HH.text "Halogen Storybook" ]
+      [ class_ "Storybook-logo"
+      , HP.href "#"
+      ]
+      [ case logo of
+          Nothing -> HH.text "Halogen Storybook"
+          Just logo' -> HH.fromPlainHTML logo'
+      ]
     , renderSidebar stories state
     , HH.div [ class_ "Storybook-main" ]
         [ renderMain stories state  ]
     ]
 
-app :: forall m. Stories m -> H.Component HH.HTML Query Unit Void m
-app stories =
+app :: forall m. Config m -> H.Component HH.HTML Query Unit Void m
+app config =
   H.parentComponent
     { initialState: const initialState
-    , render: render stories
+    , render: render config
     , eval
     , receiver: const Nothing
     }
@@ -113,10 +121,10 @@ app stories =
 
 -- | Takes stories config and mount element, and renders the storybook.
 runStorybook
-  :: Stories Aff
+  :: Config Aff
   -> HTMLElement
   -> Aff Unit
-runStorybook stories body = do
-  app' <- runUI (app stories) unit body
+runStorybook config body = do
+  app' <- runUI (app config) unit body
   void $ H.liftEffect $ hashes $ \_ next ->
     launchAff_ $ app'.query (H.action $ RouteChange $ unsafeDecodeURI next)
