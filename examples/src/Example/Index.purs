@@ -2,13 +2,14 @@ module Example.Index where
 
 import Prelude
 
+import Data.Const (Const)
 import Data.Maybe (Maybe(..))
+import Data.Newtype (unwrap)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 
-data Query a
-  = Empty a
+type Query = Const Void
 
 type State = Unit
 
@@ -38,4 +39,4 @@ component = H.component
   }
   where
   eval :: Query ~> H.ComponentDSL State Query Void m
-  eval (Empty next) = pure next
+  eval = absurd <<< unwrap

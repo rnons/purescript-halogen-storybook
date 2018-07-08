@@ -75,31 +75,31 @@ renderMain stories state =
     Just cmp -> HH.slot state.route cmp unit absurd
     _ ->
       HH.div_
-        [ HH.h2_ [ HH.text "Hello world" ]
-        , HH.p_
-            [ HH.text "This site is powered by "
-            , HH.a
-                [ HP.href "https://github.com/rnons/purescript-halogen-storybook" ]
-                [ HH.text "halogen-storybook" ]
-            , HH.text "."
-            ]
+      [ HH.h2_ [ HH.text "Hello world" ]
+      , HH.p_
+        [ HH.text "This site is powered by "
+        , HH.a
+          [ HP.href "https://github.com/rnons/purescript-halogen-storybook" ]
+          [ HH.text "halogen-storybook" ]
+        , HH.text "."
         ]
+      ]
 
 render :: forall m. Config m -> State -> HTML m
-render { stories, logo } state = do
+render { stories, logo } state =
   HH.div [ class_ "Storybook" ]
-    [ HH.a
-      [ class_ "Storybook-logo"
-      , HP.href "#"
-      ]
-      [ case logo of
-          Nothing -> HH.text "Halogen Storybook"
-          Just logo' -> HH.fromPlainHTML logo'
-      ]
-    , renderSidebar stories state
-    , HH.div [ class_ "Storybook-main" ]
-        [ renderMain stories state  ]
+  [ HH.a
+    [ class_ "Storybook-logo"
+    , HP.href "#"
     ]
+    [ case logo of
+        Nothing -> HH.text "Halogen Storybook"
+        Just logo' -> HH.fromPlainHTML logo'
+    ]
+  , renderSidebar stories state
+  , HH.div [ class_ "Storybook-main" ]
+    [ renderMain stories state  ]
+  ]
 
 app :: forall m. Config m -> H.Component HH.HTML Query Unit Void m
 app config =
