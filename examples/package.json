@@ -2,7 +2,7 @@
   "private": true,
   "license": "BSD-3-Clause",
   "scripts": {
-    "build": "webpack --mode production --progress",
+    "build": "pulp build --to output/Main/index.js && webpack --mode production --progress",
     "pscid:build": "pulp build",
     "start": "webpack-dev-server --mode development --progress"
   },

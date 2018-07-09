@@ -1,4 +1,6 @@
 import Main from "Main";
 import "./Storybook.css";
 
-Main.main();
+if (process.env.NODE_ENV !== "production") {
+  Main.main();
+}
