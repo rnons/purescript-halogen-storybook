@@ -12,6 +12,7 @@ import Data.Const (Const)
 import Data.Functor (mapFlipped)
 import Data.Maybe (Maybe(..))
 import Data.String as String
+import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff, launchAff_)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
@@ -42,9 +43,9 @@ type StoryQuery = ProxyS (Const Void) Unit
 -- | ```
 type Stories m = Object.Object (H.Component HH.HTML StoryQuery Unit Void m)
 
-type Slot = String
+type Slot = ( story :: H.Slot StoryQuery Void String )
 
-type HTML m = H.ParentHTML Query StoryQuery Slot m
+type HTML m = H.ComponentHTML Query Slot m
 
 type Config m =
   { stories :: Stories m
@@ -72,7 +73,7 @@ renderSidebar stories { route } =
 renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
   case Object.lookup state.route stories of
-    Just cmp -> HH.slot state.route cmp unit absurd
+    Just cmp -> HH.slot (SProxy :: SProxy "story") state.route cmp unit absurd
     _ ->
       HH.div_
       [ HH.h2_ [ HH.text "Hello world" ]
@@ -103,18 +104,20 @@ render { stories, logo } state =
 
 app :: forall m. Config m -> H.Component HH.HTML Query Unit Void m
 app config =
-  H.parentComponent
+  H.component
     { initialState: const initialState
     , render: render config
     , eval
     , receiver: const Nothing
+    , initializer: Nothing
+    , finalizer: Nothing
     }
   where
 
   initialState :: State
   initialState = { route: "" }
 
-  eval :: Query ~> H.ParentDSL State Query StoryQuery Slot Void m
+  eval :: Query ~> H.HalogenM State Query Slot Void m
   eval (RouteChange route next) = do
     void $ H.modify (\state -> state { route = route })
     pure next

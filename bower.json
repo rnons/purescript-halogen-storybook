@@ -17,7 +17,7 @@
     "docs"
   ],
   "dependencies": {
-    "purescript-halogen": "^4.0.0",
+    "purescript-halogen": "master",
     "purescript-routing": "^8.0.0",
     "purescript-foreign-object": "^1.0.0"
   },

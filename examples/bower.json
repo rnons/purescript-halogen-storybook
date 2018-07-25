@@ -8,7 +8,7 @@
     "output"
   ],
   "dependencies": {
-    "purescript-halogen": "^4.0.0",
+    "purescript-halogen": "master",
     "purescript-halogen-storybook": "*"
   },
   "devDependencies": {
