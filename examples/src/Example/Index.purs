@@ -16,7 +16,7 @@ type State = Unit
 initialState :: State
 initialState = unit
 
-render :: State -> H.ComponentHTML Query
+render :: forall m. State -> H.ComponentHTML Query () m
 render state =
   HH.div_
   [ HH.h3_
@@ -36,7 +36,9 @@ component = H.component
   , render
   , eval
   , receiver: const Nothing
+  , initializer: Nothing
+  , finalizer: Nothing
   }
   where
-  eval :: Query ~> H.ComponentDSL State Query Void m
+  eval :: Query ~> H.HalogenM State Query () Void m
   eval = absurd <<< unwrap

@@ -18,13 +18,15 @@ component = H.component
   , render
   , eval
   , receiver: const Nothing
+  , initializer: Nothing
+  , finalizer: Nothing
   }
   where
 
   initialState :: State
   initialState = { name: "" }
 
-  render :: State -> H.ComponentHTML Query
+  render :: State -> H.ComponentHTML Query () m
   render state =
     HH.div_
       [ HH.h3_
@@ -37,6 +39,6 @@ component = H.component
           [ HH.text $ "Hello, " <> state.name ]
       ]
 
-  eval :: Query ~> H.ComponentDSL State Query Void m
+  eval :: Query ~> H.HalogenM State Query () Void m
   eval (InputName name next) = next <$ do
     H.modify _{ name = name }

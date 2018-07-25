@@ -20,13 +20,15 @@ component = H.component
   , render
   , eval
   , receiver: const Nothing
+  , initializer: Nothing
+  , finalizer: Nothing
   }
   where
 
   initialState :: State
   initialState = { value: 0 }
 
-  render :: State -> H.ComponentHTML Query
+  render :: State -> H.ComponentHTML Query () m
   render state =
     HH.div_
       [ HH.h3_
@@ -45,7 +47,7 @@ component = H.component
           ]
       ]
 
-  eval :: Query ~> H.ComponentDSL State Query Void m
+  eval :: Query ~> H.HalogenM State Query () Void m
   eval (Increase next) =
     H.modify (\state -> state { value = state.value + 1 }) $> next
   eval (Decrease next) =
