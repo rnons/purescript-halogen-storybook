@@ -44,11 +44,11 @@ type StoryQuery = Const Void
 -- | ```
 type Stories m = Object.Object (H.Component HH.HTML StoryQuery Unit Void m)
 
-type Slot = (child :: H.Slot StoryQuery Void String)
+type Slots = (child :: H.Slot StoryQuery Void String)
 
 _child = SProxy :: SProxy "child"
 
-type HTML m = H.ComponentHTML Action Slot m
+type HTML m = H.ComponentHTML Action Slots m
 
 type Config m =
   { stories :: Stories m
@@ -121,7 +121,7 @@ app config = H.mkComponent
 handleQuery
   :: forall a m
    . Query a
-  -> H.HalogenM State Action Slot Void m (Maybe a)
+  -> H.HalogenM State Action Slots Void m (Maybe a)
 handleQuery = case _ of
   RouteChange route a -> do
     void $ H.modify (\state -> state { route = route })

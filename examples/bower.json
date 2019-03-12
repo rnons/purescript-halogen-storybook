@@ -8,7 +8,8 @@
     "output"
   ],
   "dependencies": {
-    "purescript-halogen": "^5.0.0-rc.3"
+    "purescript-halogen": "^5.0.0-rc.3",
+    "purescript-routing": "^9.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"
