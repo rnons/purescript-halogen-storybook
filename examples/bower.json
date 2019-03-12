@@ -8,8 +8,7 @@
     "output"
   ],
   "dependencies": {
-    "purescript-halogen": "^4.0.0",
-    "purescript-halogen-storybook": "*"
+    "purescript-halogen": "^5.0.0-rc.3"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

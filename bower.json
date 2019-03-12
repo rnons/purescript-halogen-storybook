@@ -17,9 +17,8 @@
     "docs"
   ],
   "dependencies": {
-    "purescript-halogen": "^4.0.0",
-    "purescript-routing": "^8.0.0",
-    "purescript-foreign-object": "^1.0.0"
+    "purescript-halogen": "^5.0.0-rc.3",
+    "purescript-foreign-object": "^2.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

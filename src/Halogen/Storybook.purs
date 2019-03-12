@@ -12,25 +12,27 @@ import Data.Const (Const)
 import Data.Functor (mapFlipped)
 import Data.Maybe (Maybe(..))
 import Data.String as String
+import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff, launchAff_)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
-import Halogen.Storybook.Proxy (ProxyS, proxy)
+import Halogen.Storybook.Proxy (proxy)
 import Halogen.VDom.Driver (runUI)
 import Routing.Hash (hashes)
 import Web.HTML.HTMLElement (HTMLElement)
 
-data Query a
-  = RouteChange String a
+data Query a = RouteChange String a
+
+type Action = Void
 
 type State =
   { route :: String
   }
 
-type StoryQuery = ProxyS (Const Void) Unit
+type StoryQuery = Const Void
 
 -- | Stories config, each story consists of a story name and a component.
 -- | Note the component needs to be proxied explicitly.
@@ -42,9 +44,11 @@ type StoryQuery = ProxyS (Const Void) Unit
 -- | ```
 type Stories m = Object.Object (H.Component HH.HTML StoryQuery Unit Void m)
 
-type Slot = String
+type Slot = (child :: H.Slot StoryQuery Void String)
 
-type HTML m = H.ParentHTML Query StoryQuery Slot m
+_child = SProxy :: SProxy "child"
+
+type HTML m = H.ComponentHTML Action Slot m
 
 type Config m =
   { stories :: Stories m
@@ -72,7 +76,7 @@ renderSidebar stories { route } =
 renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
   case Object.lookup state.route stories of
-    Just cmp -> HH.slot state.route cmp unit absurd
+    Just cmp -> HH.slot _child state.route cmp unit absurd
     _ ->
       HH.div_
       [ HH.h2_ [ HH.text "Hello world" ]
@@ -102,22 +106,26 @@ render { stories, logo } state =
   ]
 
 app :: forall m. Config m -> H.Component HH.HTML Query Unit Void m
-app config =
-  H.parentComponent
-    { initialState: const initialState
-    , render: render config
-    , eval
-    , receiver: const Nothing
+app config = H.mkComponent
+  { initialState: const initialState
+  , render: render config
+  , eval: H.mkEval $ H.defaultEval
+    { handleQuery = handleQuery
     }
+  }
   where
 
   initialState :: State
   initialState = { route: "" }
 
-  eval :: Query ~> H.ParentDSL State Query StoryQuery Slot Void m
-  eval (RouteChange route next) = do
+handleQuery
+  :: forall a m
+   . Query a
+  -> H.HalogenM State Action Slot Void m (Maybe a)
+handleQuery = case _ of
+  RouteChange route a -> do
     void $ H.modify (\state -> state { route = route })
-    pure next
+    pure (Just a)
 
 -- | Takes stories config and mount element, and renders the storybook.
 runStorybook
@@ -127,4 +135,4 @@ runStorybook
 runStorybook config body = do
   app' <- runUI (app config) unit body
   void $ H.liftEffect $ hashes $ \_ next ->
-    launchAff_ $ app'.query (H.action $ RouteChange $ unsafeDecodeURI next)
+    launchAff_ $ app'.query (H.tell $ RouteChange $ unsafeDecodeURI next)

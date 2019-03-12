@@ -3,8 +3,6 @@ module Example.Index where
 import Prelude
 
 import Data.Const (Const)
-import Data.Maybe (Maybe(..))
-import Data.Newtype (unwrap)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
@@ -16,7 +14,7 @@ type State = Unit
 initialState :: State
 initialState = unit
 
-render :: State -> H.ComponentHTML Query
+render :: forall m. State -> H.ComponentHTML Void () m
 render state =
   HH.div_
   [ HH.h3_
@@ -31,12 +29,8 @@ render state =
   ]
 
 component :: forall m. H.Component HH.HTML Query Unit Void m
-component = H.component
+component = H.mkComponent
   { initialState: const initialState
   , render
-  , eval
-  , receiver: const Nothing
+  , eval: H.mkEval $ H.defaultEval
   }
-  where
-  eval :: Query ~> H.ComponentDSL State Query Void m
-  eval = absurd <<< unwrap

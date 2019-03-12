@@ -1,44 +1,51 @@
--- | A proxy that hides both the Query and Message of wrapped component.
--- | Adapted from `Halogen.Component.Proxy`.
 module Halogen.Storybook.Proxy
-  ( ProxyS
-  , proxy
+  ( proxy
   ) where
 
 import Prelude
 
-import Data.Const (Const(..))
-import Data.Coyoneda (Coyoneda, unCoyoneda)
+import Data.Const (Const)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (un)
+import Data.Symbol (SProxy(..))
 import Halogen as H
 import Halogen.HTML as HH
 
-data ProxyS f i a
-  = Query (Coyoneda f a)
+type Slot f o = H.Slot Query Message
 
--- | A proxy that hides both the Query and Message of wrapped component.
+type Query = Const Void
+
+type Message = Void
+
+data Action o = HandleChild o
+
+type State i = i
+
+type ChildSlots f o =
+  ( child :: H.Slot f o Unit
+  )
+
+_child = SProxy :: SProxy "child"
+
 proxy
   :: forall f i o m
-  . H.Component HH.HTML f i o m
-  -> H.Component HH.HTML (ProxyS (Const Void) i) i Void m
-proxy = proxyEval (const (absurd <<< un Const))
+   . H.Component HH.HTML f i o m
+  -> H.Component HH.HTML Query i Message m
+proxy innerComponent = H.mkComponent
+  { initialState: identity
+  , render: render innerComponent
+  , eval: H.mkEval $ H.defaultEval
+  }
 
-proxyEval
-  :: forall f g i o m
-   . (forall a b. (b -> a) -> g b -> H.ParentDSL i (ProxyS g i) f Unit Void m a)
-  -> H.Component HH.HTML f i o m
-  -> H.Component HH.HTML (ProxyS g i) i Void m
-proxyEval evalQuery component =
-  H.parentComponent
-    { initialState: identity
-    , render
-    , eval
-    , receiver: const Nothing
-    }
-  where
-    render :: i -> H.ParentHTML (ProxyS g i) f Unit m
-    render i = HH.slot unit component i (const Nothing)
+render
+  :: forall f i o m
+   . H.Component HH.HTML f i o m
+  -> State i
+  -> H.ComponentHTML (Action o) (ChildSlots f o) m
+render innerComponent state =
+  HH.slot _child unit innerComponent state (Just <<< HandleChild)
 
-    eval :: ProxyS g i ~> H.ParentDSL i (ProxyS g i) f Unit Void m
-    eval (Query iq) = unCoyoneda evalQuery iq
+handleAction
+  :: forall f i o m
+   . Action o
+  -> H.HalogenM (State i) (Action o) (ChildSlots f o) Message m Unit
+handleAction (HandleChild _)= pure unit
