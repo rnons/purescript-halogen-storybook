@@ -4,6 +4,7 @@
   "scripts": {
     "build": "pulp build --to output/Main/index.js && webpack --mode production --progress",
     "pscid:build": "pulp build",
+    "postinstall": "bower install",
     "start": "webpack-dev-server --mode development --progress"
   },
   "devDependencies": {

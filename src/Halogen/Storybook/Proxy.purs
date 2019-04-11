@@ -10,8 +10,6 @@ import Data.Symbol (SProxy(..))
 import Halogen as H
 import Halogen.HTML as HH
 
-data Action o = HandleChild o
-
 type Slots f o = (child :: H.Slot f o Unit)
 
 _child = SProxy :: SProxy "child"
@@ -31,6 +29,6 @@ render
   :: forall f i o m
    . H.Component HH.HTML f i o m
   -> i
-  -> H.ComponentHTML (Action o) (Slots f o) m
+  -> H.ComponentHTML Void (Slots f o) m
 render innerComponent state =
-  HH.slot _child unit innerComponent state (Just <<< HandleChild)
+  HH.slot _child unit innerComponent state (const Nothing)
