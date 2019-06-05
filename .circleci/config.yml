@@ -21,7 +21,7 @@ jobs:
           command: |
             yarn add --dev bower purescript pulp
             yarn
-            yarn build
+            yarn build:ps
 
       - save_cache:
           paths:
@@ -30,6 +30,11 @@ jobs:
             - examples/node_modules
             - examples/bower_components
           key: deps-{{ checksum "bower.json" }}-{{ checksum "examples/bower.json" }}
+
+      - run:
+          working_directory: examples
+          command: |
+            yarn build
 
       - run:
           command: |
