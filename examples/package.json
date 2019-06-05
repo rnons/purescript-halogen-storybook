@@ -2,17 +2,17 @@
   "private": true,
   "license": "BSD-3-Clause",
   "scripts": {
-    "build": "pulp build --to output/Main/index.js && webpack --mode production --progress",
-    "pscid:build": "pulp build",
+    "build": "pulp build -I ../src -- +RTS -N2 -RTS && webpack --mode production --progress",
     "postinstall": "bower install",
+    "pscid:build": "pulp build",
     "start": "webpack-dev-server --mode development --progress"
   },
   "devDependencies": {
-    "css-loader": "^0.28.9",
+    "css-loader": "^2.1.1",
     "html-webpack-plugin": "^3.2.0",
-    "style-loader": "^0.21.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.10.1",
-    "webpack-cli": "^2.1.4",
+    "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.1.4"
   }
 }
