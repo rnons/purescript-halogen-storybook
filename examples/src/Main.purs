@@ -16,8 +16,8 @@ import Halogen.Storybook (Stories, runStorybook, proxy)
 stories :: forall m. Stories m
 stories = Object.fromFoldable
   [ Tuple "" $ proxy ExpIndex.component
-  , Tuple "count" $ proxy ExpCount.component
-  , Tuple "input" $ proxy ExpInput.component
+  , Tuple "Basic|count" $ proxy ExpCount.component
+  , Tuple "Form|input" $ proxy ExpInput.component
   ]
 
 logo :: HH.PlainHTML

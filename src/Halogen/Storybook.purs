@@ -9,7 +9,6 @@ import Prelude
 
 import Data.Array as Array
 import Data.Const (Const)
-import Data.Functor (mapFlipped)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Symbol (SProxy(..))
@@ -58,20 +57,53 @@ type Config m =
 class_ :: forall r i. String -> HP.IProp ("class" :: String | r) i
 class_ = HP.class_ <<< HH.ClassName
 
-renderSidebar :: forall m. Stories m -> State -> HTML m
-renderSidebar stories { route } =
-  HH.ul [ class_ "Storybook-nav" ] $
-    mapFlipped (Array.filter (not <<< String.null) $ Object.keys stories) $ \name ->
-      HH.li_
-      [ HH.a
-        [ class_ if route == name then linkActiveClass else linkClass
-        , HP.href $ "#" <> unsafeEncodeURI name
-        ]
-        [ HH.text name ]
+type StoryName =
+  { name :: String
+  , path :: String
+  }
+
+renderStoryNames :: forall m. State -> Array StoryName -> HTML m
+renderStoryNames { route } items =
+  HH.ul
+  [ class_ "Storybook-nav-list"
+  ] $ items <#> \item ->
+    HH.li_
+    [ HH.a
+      [ class_ if route == item.path then linkActiveClass else linkClass
+      , HP.href $ "#" <> unsafeEncodeURI item.path
       ]
+      [ HH.text item.name ]
+    ]
   where
-    linkClass = "Storybook-link"
-    linkActiveClass = linkClass <> " is-active"
+  linkClass = "Storybook-link"
+  linkActiveClass = linkClass <> " is-active"
+
+renderSidebar :: forall m. Stories m -> State -> HTML m
+renderSidebar stories state =
+  HH.div [ class_ "Storybook-nav" ] $
+    nameObj # Object.foldMap \section items -> case section of
+      "" ->
+        [ renderStoryNames state items ]
+      _ ->
+        [ HH.div
+          [ class_ "Storybook-nav-section" ]
+          [ HH.div
+            [ class_ "Storybook-nav-section-title" ]
+            [ HH.text section ]
+          , renderStoryNames state items
+          ]
+        ]
+  where
+  nameObj = (Object.keys stories) # Array.foldMap case _ of
+    "" -> Object.empty
+    path ->
+      case String.indexOf (String.Pattern "|") path of
+        Nothing -> Object.singleton "" [{ name: path, path}]
+        Just index ->
+          let { before, after } = String.splitAt index path
+          in
+            Object.singleton before
+              [{name: String.drop 1 after, path}]
 
 renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
