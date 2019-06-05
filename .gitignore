@@ -1,5 +1,7 @@
 bower_components
 node_modules
+yarn.lock
 
 .psci_modules
 output
+docs
