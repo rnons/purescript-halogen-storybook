@@ -9,9 +9,11 @@ import Prelude
 
 import Data.Array as Array
 import Data.Const (Const)
+import Data.Foldable (foldMapDefaultL)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Symbol (SProxy(..))
+import Data.Tuple (Tuple(..), fst)
 import Effect.Aff (Aff, launchAff_)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
@@ -66,7 +68,7 @@ renderStoryNames :: forall m. State -> Array StoryName -> HTML m
 renderStoryNames { route } items =
   HH.ul
   [ class_ "Storybook-nav-list"
-  ] $ items <#> \item ->
+  ] $ (Array.sortWith _.name items) <#> \item ->
     HH.li_
     [ HH.a
       [ class_ if route == item.path then linkActiveClass else linkClass
@@ -81,20 +83,21 @@ renderStoryNames { route } items =
 renderSidebar :: forall m. Stories m -> State -> HTML m
 renderSidebar stories state =
   HH.div [ class_ "Storybook-nav" ] $
-    nameObj # Object.foldMap \section items -> case section of
+    sorted <#> \(Tuple section items) -> case section of
       "" ->
+        HH.div
+        [ class_ "Storybook-nav-section" ]
         [ renderStoryNames state items ]
       _ ->
+        HH.div
+        [ class_ "Storybook-nav-section" ]
         [ HH.div
-          [ class_ "Storybook-nav-section" ]
-          [ HH.div
-            [ class_ "Storybook-nav-section-title" ]
-            [ HH.text section ]
-          , renderStoryNames state items
-          ]
+          [ class_ "Storybook-nav-section-title" ]
+          [ HH.text section ]
+        , renderStoryNames state items
         ]
   where
-  nameObj = (Object.keys stories) # Array.foldMap case _ of
+  nameObj = (Object.keys stories) # foldMapDefaultL case _ of
     "" -> Object.empty
     path ->
       case String.indexOf (String.Pattern "|") path of
@@ -104,6 +107,7 @@ renderSidebar stories state =
           in
             Object.singleton before
               [{name: String.drop 1 after, path}]
+  sorted = Array.sortWith fst $ Object.toUnfoldable nameObj
 
 renderMain :: forall m. Stories m -> State -> HTML m
 renderMain stories state =
