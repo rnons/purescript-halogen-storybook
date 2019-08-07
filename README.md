@@ -14,7 +14,7 @@ A library to assemble examples or develop components separately.
 
 First define the stories. Each story consists of a name and a component. If the name is empty string, it will be rendered as the index page.
 
-```
+```purescript
 import Foreign.Object as Object
 import Halogen.Storybook (Stories, runStorybook, proxy)
 
@@ -28,7 +28,7 @@ stories = Object.fromFoldable
 
 Then add a `runStorybook` line to your main function. That's it.
 
-```
+```purescript
 main = HA.runHalogenAff do
   HA.awaitBody >>=
     runStorybook
