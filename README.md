@@ -10,6 +10,8 @@ A library to assemble examples or develop components separately.
 
 [DEMO](https://rnons.github.io/purescript-halogen-storybook/)
 
+You might be interested in [purescript-halogen-custom-element](https://github.com/nonbili/purescript-halogen-custom-element) which allows embedding Halogen components anywhere in an HTML or Markdown file.
+
 ## How to use
 
 First define the stories. Each story consists of a name and a component. If the name is empty string, it will be rendered as the index page.
