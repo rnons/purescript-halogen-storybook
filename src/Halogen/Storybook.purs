@@ -43,7 +43,7 @@ type StoryQuery = Const Void
 -- | stories = Object.fromFoldable
 -- |   [ Tuple "count" $ proxy $ ExpCount.component
 -- | ```
-type Stories m = Object.Object (H.Component HH.HTML StoryQuery Unit Void m)
+type Stories m = Object.Object (H.Component StoryQuery Unit Void m)
 
 type Slots = (child :: H.Slot StoryQuery Void String)
 
@@ -141,7 +141,7 @@ render { stories, logo } state =
     [ renderMain stories state  ]
   ]
 
-app :: forall m. Config m -> H.Component HH.HTML Query Unit Void m
+app :: forall m. Config m -> H.Component Query Unit Void m
 app config = H.mkComponent
   { initialState: const initialState
   , render: render config
@@ -171,4 +171,4 @@ runStorybook
 runStorybook config body = do
   app' <- runUI (app config) unit body
   void $ H.liftEffect $ hashes $ \_ next ->
-    launchAff_ $ app'.query (H.tell $ RouteChange $ unsafeDecodeURI next)
+    launchAff_ $ app'.query (H.mkTell $ RouteChange $ unsafeDecodeURI next)

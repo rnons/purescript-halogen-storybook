@@ -5,7 +5,6 @@ module Halogen.Storybook.Proxy
 import Prelude
 
 import Data.Const (Const)
-import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
 import Halogen as H
 import Halogen.HTML as HH
@@ -17,8 +16,8 @@ _child = SProxy :: SProxy "child"
 -- | A proxy that hides both the Query and Message of wrapped component.
 proxy
   :: forall f i o m
-   . H.Component HH.HTML f i o m
-  -> H.Component HH.HTML (Const Void) i Void m
+   . H.Component f i o m
+  -> H.Component (Const Void) i Void m
 proxy innerComponent = H.mkComponent
   { initialState: identity
   , render: render innerComponent
@@ -27,8 +26,8 @@ proxy innerComponent = H.mkComponent
 
 render
   :: forall f i o m
-   . H.Component HH.HTML f i o m
+   . H.Component f i o m
   -> i
   -> H.ComponentHTML Void (Slots f o) m
 render innerComponent state =
-  HH.slot _child unit innerComponent state (const Nothing)
+  HH.slot_ _child unit innerComponent state
