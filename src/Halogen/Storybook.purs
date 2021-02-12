@@ -10,20 +10,21 @@ import Prelude
 import Data.Array as Array
 import Data.Const (Const)
 import Data.Foldable (foldMapDefaultL)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromJust)
 import Data.String as String
-import Data.Symbol (SProxy(..))
 import Data.Tuple (Tuple(..), fst)
 import Effect.Aff (Aff, launchAff_)
 import Foreign.Object as Object
-import Global.Unsafe (unsafeDecodeURI, unsafeEncodeURI)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Halogen.Storybook.Proxy (proxy)
 import Halogen.VDom.Driver (runUI)
+import JSURI (decodeURIComponent, encodeURIComponent)
+import Partial.Unsafe (unsafePartial)
 import Routing.Hash (hashes)
 import Web.HTML.HTMLElement (HTMLElement)
+import Type.Proxy (Proxy(..))
 
 data Query a = RouteChange String a
 
@@ -33,7 +34,7 @@ type State =
   { route :: String
   }
 
-type StoryQuery = Const Void
+type StoryQuery = Const Void :: Type -> Type
 
 -- | Stories config, each story consists of a story name and a component.
 -- | Note the component needs to be proxied explicitly.
@@ -47,7 +48,7 @@ type Stories m = Object.Object (H.Component StoryQuery Unit Void m)
 
 type Slots = (child :: H.Slot StoryQuery Void String)
 
-_child = SProxy :: SProxy "child"
+_child = Proxy :: Proxy "child"
 
 type HTML m = H.ComponentHTML Action Slots m
 
@@ -72,7 +73,7 @@ renderStoryNames { route } items =
     HH.li_
     [ HH.a
       [ class_ if route == item.path then linkActiveClass else linkClass
-      , HP.href $ "#" <> unsafeEncodeURI item.path
+      , HP.href $ "#" <> (unsafePartial $ fromJust $ encodeURIComponent item.path)
       ]
       [ HH.text item.name ]
     ]
@@ -171,4 +172,6 @@ runStorybook
 runStorybook config body = do
   app' <- runUI (app config) unit body
   void $ H.liftEffect $ hashes $ \_ next ->
-    launchAff_ $ app'.query (H.mkTell $ RouteChange $ unsafeDecodeURI next)
+    case decodeURIComponent next of
+         Nothing -> pure unit
+         Just next' -> launchAff_ $ app'.query (H.mkTell $ RouteChange next')

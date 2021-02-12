@@ -5,13 +5,13 @@ module Halogen.Storybook.Proxy
 import Prelude
 
 import Data.Const (Const)
-import Data.Symbol (SProxy(..))
 import Halogen as H
 import Halogen.HTML as HH
+import Type.Proxy (Proxy(..))
 
 type Slots f o = (child :: H.Slot f o Unit)
 
-_child = SProxy :: SProxy "child"
+_child = Proxy :: Proxy "child"
 
 -- | A proxy that hides both the Query and Message of wrapped component.
 proxy
