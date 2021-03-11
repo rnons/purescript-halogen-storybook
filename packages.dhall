@@ -132,7 +132,7 @@ let additions = {
             , "now"
             ]
         , repo = "https://github.com/thomashoneyman/purescript-event.git"
-        , version = "master"
+        , version = "a1b8c78f767b041841a88597affee42e2551d874"
         }
 }
 
