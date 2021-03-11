@@ -9,7 +9,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - deps-{{ checksum "bower.json" }}-{{ checksum "examples/bower.json" }}
+          - deps-{{ checksum "packages.dhall" }}-{{ checksum "examples/spago.dhall" }}
 
       - run:
           command: |
@@ -19,17 +19,15 @@ jobs:
       - run:
           working_directory: examples
           command: |
-            yarn add --dev bower purescript pulp
+            yarn add --dev spago purescript
             yarn
             yarn build:ps
 
       - save_cache:
           paths:
-            - bower_components
-            - output
-            - examples/node_modules
-            - examples/bower_components
-          key: deps-{{ checksum "bower.json" }}-{{ checksum "examples/bower.json" }}
+            - examples/output
+            - examples/.spago
+          key: deps-{{ checksum "packages.dhall" }}-{{ checksum "examples/spago.dhall" }}
 
       - run:
           working_directory: examples
