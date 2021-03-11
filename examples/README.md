@@ -1,5 +1,5 @@
 ```
 yarn
-pulp -w build -I ../src
+spago build
 yarn start
 ```

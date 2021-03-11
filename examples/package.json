@@ -2,10 +2,9 @@
   "private": true,
   "license": "BSD-3-Clause",
   "scripts": {
-    "build:ps": "pulp build -I ../src --to output/Main/index.js -- +RTS -N2 -RTS",
+    "build:ps": "spago build",
     "build": "webpack --mode production --progress",
-    "postinstall": "bower install",
-    "pscid:build": "pulp build",
+    "pscid:build": "spago build",
     "start": "webpack-dev-server --mode development --progress"
   },
   "devDependencies": {

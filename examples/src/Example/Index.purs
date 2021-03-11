@@ -28,7 +28,7 @@ render state =
     ]
   ]
 
-component :: forall m. H.Component HH.HTML Query Unit Void m
+component :: forall m. H.Component Query Unit Void m
 component = H.mkComponent
   { initialState: const initialState
   , render
