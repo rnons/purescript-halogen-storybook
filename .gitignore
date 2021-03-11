@@ -8,3 +8,6 @@ docs
 .psc-ide-port
 .purs-repl
 .spago/
+
+package.json
+package-lock.json
