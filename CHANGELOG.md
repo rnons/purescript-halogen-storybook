@@ -1,4 +1,4 @@
-## 0.5.0
+## 1.0.1
 
 - Support Purescript 0.14 and Halogen 6
 
