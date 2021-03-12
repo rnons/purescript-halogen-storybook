@@ -3,19 +3,6 @@ let upstream =
 
 let overrides = {=}
 
-let additions =
-      { event =
-          { dependencies =
-            [ "effect"
-            , "filterable"
-            , "nullable"
-            , "unsafe-reference"
-            , "js-timers"
-            , "now"
-            ]
-          , repo = "https://github.com/thomashoneyman/purescript-event.git"
-          , version = "a1b8c78f767b041841a88597affee42e2551d874"
-          }
-      }
+let additions = {=}
 
 in  upstream // overrides // additions
