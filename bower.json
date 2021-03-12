@@ -1,28 +1,20 @@
 {
   "name": "purescript-halogen-storybook",
   "description": "a library to assemble examples or develop components separately",
-  "authors": [
-    "Ping Chen <remotenonsense@gmail.com>"
-  ],
+  "authors": ["Ping Chen <remotenonsense@gmail.com>"],
   "repository": {
     "type": "git",
     "url": "git://github.com/rnons/purescript-halogen-storybook.git"
   },
   "license": "BSD-3-Clause",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "output",
-    "docs"
-  ],
+  "ignore": ["**/.*", "node_modules", "bower_components", "output", "docs"],
   "dependencies": {
-    "purescript-halogen": "^5.0.0-rc.4",
-    "purescript-routing": "^9.0.0",
-    "purescript-foreign-object": "^2.0.0",
-    "purescript-js-uri": "master"
+    "purescript-halogen": "^6.0.0",
+    "purescript-routing": "^10.0.0",
+    "purescript-foreign-object": "^3.0.0",
+    "purescript-js-uri": "https://github.com/purescript-contrib/purescript-js-uri#^2.0.0"
   },
   "devDependencies": {
-    "purescript-psci-support": "^4.0.0"
+    "purescript-psci-support": "^5.0.0"
   }
 }
