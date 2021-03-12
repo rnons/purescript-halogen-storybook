@@ -12,7 +12,7 @@
     "purescript-halogen": "^6.0.0",
     "purescript-routing": "^10.0.0",
     "purescript-foreign-object": "^3.0.0",
-    "purescript-js-uri": "https://github.com/purescript-contrib/purescript-js-uri#^2.0.0"
+    "purescript-js-uri": "https://github.com/purescript-contrib/purescript-js-uri.git#v2.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^5.0.0"
