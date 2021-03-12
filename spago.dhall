@@ -3,7 +3,6 @@
   [ "console"
   , "debug"
   , "effect"
-  , "event"
   , "foreign-object"
   , "halogen"
   , "psci-support"
