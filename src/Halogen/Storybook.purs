@@ -9,11 +9,11 @@ import Prelude
 
 import Data.Array as Array
 import Data.Const (Const)
-import Data.Foldable (foldMapDefaultL)
+import Data.Foldable (foldMapDefaultL, for_)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.String as String
 import Data.Tuple (Tuple(..), fst)
-import Effect.Aff (Aff, launchAff_)
+import Effect.Aff (Aff, launchAff, launchAff_)
 import Foreign.Object as Object
 import Halogen as H
 import Halogen.HTML as HH
@@ -23,8 +23,8 @@ import Halogen.VDom.Driver (runUI)
 import JSURI (decodeURIComponent, encodeURIComponent)
 import Partial.Unsafe (unsafePartial)
 import Routing.Hash (hashes)
-import Web.HTML.HTMLElement (HTMLElement)
 import Type.Proxy (Proxy(..))
+import Web.HTML.HTMLElement (HTMLElement)
 
 data Query a = RouteChange String a
 
@@ -172,6 +172,5 @@ runStorybook
 runStorybook config body = do
   app' <- runUI (app config) unit body
   void $ H.liftEffect $ hashes $ \_ next ->
-    case decodeURIComponent next of
-         Nothing -> pure unit
-         Just next' -> launchAff_ $ app'.query (H.mkTell $ RouteChange next')
+    for_ (decodeURIComponent next) \next' -> 
+      launchAff $ app'.query (H.mkTell $ RouteChange next')
