@@ -13,7 +13,7 @@ import Data.Foldable (foldMapDefaultL, for_)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.String as String
 import Data.Tuple (Tuple(..), fst)
-import Effect.Aff (Aff, launchAff, launchAff_)
+import Effect.Aff (Aff, launchAff)
 import Foreign.Object as Object
 import Halogen as H
 import Halogen.HTML as HH
