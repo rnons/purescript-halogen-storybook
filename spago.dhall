@@ -1,12 +1,21 @@
 { name = "halogen-storybook"
 , dependencies =
-  [ "console"
-  , "debug"
+  [ "aff"
+  , "arrays"
+  , "console"
+  , "const"
   , "effect"
+  , "foldable-traversable"
   , "foreign-object"
   , "halogen"
-  , "psci-support"
+  , "js-uri"
+  , "maybe"
+  , "partial"
+  , "prelude"
   , "routing"
+  , "strings"
+  , "tuples"
+  , "web-html"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

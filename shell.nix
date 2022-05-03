@@ -1,7 +1,27 @@
-{ pkgs ? import <nixpkgs> {}
-, ps ? import (fetchTarball https://github.com/nonbili/nonbili-nix-deps/archive/de63b5eeae8cb4952c08fdbc2eea533ed14dd857.tar.gz) {}
-}:
-pkgs.mkShell {
-  # purs-0.14, spago-0.14
-  buildInputs = [ ps.purs ps.spago ];
+let
+  pkgs = import (builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/21.11.tar.gz";
+  }) {};
+
+  # To update to a newer version of easy-purescript-nix, run:
+  # nix-prefetch-git https://github.com/justinwoo/easy-purescript-nix
+  #
+  # Then, copy the resulting rev and sha256 here.
+  pursPkgs = import (pkgs.fetchFromGitHub {
+    owner = "justinwoo";
+    repo = "easy-purescript-nix";
+    rev = "0ad5775c1e80cdd952527db2da969982e39ff592";
+    sha256 = "0x53ads5v8zqsk4r1mfpzf5913byifdpv5shnvxpgw634ifyj1kg";
+  }) { inherit pkgs; };
+
+in pkgs.stdenv.mkDerivation {
+  name = "halogen-storybook";
+  buildInputs = [
+    pursPkgs.purs
+    pursPkgs.spago
+    pursPkgs.psa
+
+    pkgs.nodejs-16_x
+    pkgs.esbuild
+  ];
 }
